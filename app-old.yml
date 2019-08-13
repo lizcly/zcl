@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-old
+  namespace: ingress-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: app-old
+  template:
+    metadata:
+      labels:
+        run: app-old
+    spec:
+      containers:
+      - image: zouhl/app:v2.1
+        imagePullPolicy: Always
+        name: app-old
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-old
+  namespace: ingress-nginx
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: app-old
+  sessionAffinity: None
+  type: ClusterIP
